@@ -1,0 +1,9 @@
+api_platform:
+    title: Symfony project 1
+    version: 1.0.0
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']
+#    mapping:
+#        paths: [ '%kernel.project_dir%/src/Entity' ]
