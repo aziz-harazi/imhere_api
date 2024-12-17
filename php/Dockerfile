@@ -2,9 +2,9 @@ FROM php:8.3-fpm-alpine AS app
 
 WORKDIR /srv
 
-RUN docker-php-ext-install pdo
+RUN apk add --no-cache postgresql-dev && \
+docker-php-ext-install pgsql pdo pdo_pgsql
 # Allow super user to install compose
-
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 COPY --from=composer:2.4 /usr/bin/composer /usr/bin/composer

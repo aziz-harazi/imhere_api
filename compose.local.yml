@@ -1,6 +1,12 @@
 services:
   web:
     image: nginx:latest
+    networks:
+      sf_project:
+        aliases:
+          - web
+    depends_on:
+      - app
     ports:
       - "8081:80"
     volumes:
@@ -10,6 +16,12 @@ services:
     build:
       dockerfile: ./php/Dockerfile
       target: "${BUILD_TARGET:-app}"
+    networks:
+      sf_project:
+        aliases:
+          - app
+    depends_on:
+      - db
     volumes:
       - ./app:/srv
       - ./php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
@@ -21,18 +33,25 @@ services:
       host.docker.internal: host-gateway
   db:
     image: postgres:${POSTGRES_VERSION:-17}-alpine
+    networks:
+      sf_project:
+        aliases:
+          - db
     volumes:
       - postgres_data:/var/lib/postgresql/data:rw
     ports:
-      - "${POSTGRES_PORT:-5433}:5432"
+      - "5433:5432"
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
-      POSTGRES_DB: ${POSTGRES_DB:-sf_project_1}sys
+      POSTGRES_DB: ${POSTGRES_DB:-sf_project_1}
 
   cache:
     image: redis:latest
 
 volumes:
-  postgres_data: ~
+  postgres_data:
+
+networks:
+  sf_project:
