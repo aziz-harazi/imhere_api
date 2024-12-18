@@ -3,3 +3,11 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+api_doc:
+    path: /docs
+    controller: api_platform.swagger_ui.action
+
+auth:
+    path: /auth
+    methods: ['POST']

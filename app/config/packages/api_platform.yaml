@@ -5,5 +5,16 @@ api_platform:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+        pagination_client_items_per_page: true
+        pagination_maximum_items_per_page: 50
     mapping:
         paths: [ '%kernel.project_dir%/src/Entity' ]
+    swagger:
+        api_keys:
+            JWT:
+                name: Authorization
+                type: header
+    collection:
+        pagination:
+            items_per_page_parameter_name: itemsPerPage
+    enable_entrypoint: false
