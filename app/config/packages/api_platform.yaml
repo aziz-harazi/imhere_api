@@ -18,3 +18,7 @@ api_platform:
         pagination:
             items_per_page_parameter_name: itemsPerPage
     enable_entrypoint: false
+    formats:
+        multipart: ['multipart/form-data']
+        jsonld: ['application/ld+json']
+        json: ['application/json']

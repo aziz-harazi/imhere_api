@@ -24,6 +24,7 @@ services:
       - db
     volumes:
       - ./app:/srv
+      - ./app/public/uploads:/srv/public/uploads:rw,cached
       - ./php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     environment:
       REDIS_HOST: cache

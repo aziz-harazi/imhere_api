@@ -1,0 +1,34 @@
+framework:
+    messenger:
+        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
+        failure_transport: failed
+
+        transports:
+          failed: 'doctrine://default?queue_name=failed'
+          async_import_member:
+
+              # https://symfony.com/doc/current/messenger.html#transport-configuration
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                  queue_name: import_member
+                retry_strategy:
+                  max_retries: 3
+                   # milliseconds delay
+                  delay: 1000
+                  multiplier: 2
+                  max_delay: 0
+              # sync: 'sync://'
+#                 failure_transport: failed
+
+
+        routing:
+            # Route your messages to the transports
+             'App\Message\ImportMember': async_import_member
+
+when@test:
+  framework:
+      messenger:
+          transports:
+              # replace with your transport name here (e.g., my_transport: 'in-memory://')
+              # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
+              async: 'in-memory://'

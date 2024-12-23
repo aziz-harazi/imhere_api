@@ -2,7 +2,7 @@ FROM php:8.3-fpm-alpine AS app
 
 WORKDIR /srv
 
-RUN apk add --no-cache postgresql-dev && \
+RUN apk add --no-cache postgresql-dev acl && \
 docker-php-ext-install pgsql pdo pdo_pgsql
 # Allow super user to install compose
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -16,6 +16,12 @@ RUN composer install --prefer-dist --no-dev --no-scripts
 COPY ./app .
 
 RUN composer dump-autoload --optimize
+
+COPY --chown=www-data ./app/public/uploads public/uploads
+#
+#RUN setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX public/uploads \
+#	setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX public/uploads
+
 
 FROM app AS app_dev
 

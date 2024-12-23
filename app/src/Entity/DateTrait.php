@@ -8,35 +8,21 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 trait DateTrait
 {
-    #[ORM\Column(name: 'created_at', type: 'datetime')]
+    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
     #[Gedmo\Timestampable(on: 'create')]
-    protected \DateTime $createdAt;
+    protected \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(name: 'updated_at', type: 'datetime')]
+    #[ORM\Column(name: 'updated_at', type: 'datetime_immutable')]
     #[Gedmo\Timestampable(on: 'update')]
-    protected \DateTime $updatedAt;
+    protected \DateTimeImmutable $updatedAt;
 
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): \DateTime
+    public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
-    }
-
-    public function setCreatedAt(\DateTime $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function setUpdatedAt(\DateTime $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
     }
 }

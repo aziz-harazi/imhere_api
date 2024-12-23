@@ -4,16 +4,52 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Dto\ImportMemberInput;
+use App\State\ImportMemberProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\UuidInterface;
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+
+
 #[ORM\Entity]
 #[ORM\Table(name: 'member')]
 #[ORM\Index(name: 'gender_idx', fields: ['gender'])]
 #[ORM\Index(name: 'first_name_idx', fields: ['firstName'])]
 #[ORM\Index(name: 'last_name_idx', fields: ['lastName'])]
+#[ApiResource(
+    types: ['https://schema.org/Member'],
+    outputFormats: ['jsonld' => ['application/ld+json']],
+    normalizationContext: ['groups' => ['member:read']]
+)]
+#[Delete]
+#[Get]
+#[Post(
+    uriTemplate: '/members/import',
+    inputFormats: ['multipart' => ['multipart/form-data']],
+    status: Response::HTTP_NO_CONTENT,
+    input: ImportMemberInput::class,
+    output: false,
+    name: 'import',
+    processor: ImportMemberProcessor::class
+
+)]
+#[Patch(denormalizationContext: ['groups' => ['member:write']])]
+#[GetCollection]
+#[Post(denormalizationContext: ['groups' => ['member:write']])]
 class Member
 {
 
@@ -22,45 +58,64 @@ class Member
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[ORM\Column(type: 'uuid', unique: true)]
-    private UuidInterface $id;
+    #[ApiProperty(identifier: true)]
+    #[Groups(['member:read','presence:read'])]
+    private Uuid $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write','presence:read'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     private string $firstName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write','presence:read'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'partial')]
     private string $lastName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write','presence:read'])]
     private string $gender;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write'])]
     private string $parentEmail;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write'])]
     private string $parentPhone;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write'])]
     private string $parentFirstName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write'])]
     private string $parentLastName;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: false)]
+    #[Assert\NotBlank(groups: ['member:write'])]
+    #[Groups(['member:read','member:write'])]
     private \DateTimeImmutable $birthDate;
 
-    #[ORM\ManyToMany(targetEntity: Presence::class, inversedBy: 'members', cascade: ['persist'], fetch: 'EAGER')]
-    #[ORM\JoinTable(name: 'member_presence')]
-    #[ORM\JoinColumn(name: 'member_id', referencedColumnName: 'id')]
-    #[ORM\InverseJoinColumn(name: 'presence_id', referencedColumnName: 'id')]
+    #[ORM\OneToMany(targetEntity: Presence::class, mappedBy: 'member')]
+    #[Groups(['member:read'])]
     private Collection $presences;
+
 
     public function __construct()
     {
-        $this->id = Uuid::uuid4();
+        $this->id = Uuid::v4();
         $this->presences = new ArrayCollection();
     }
 
-    public function getId(): UuidInterface
+    public function getId(): Uuid
     {
         return $this->id;
     }
