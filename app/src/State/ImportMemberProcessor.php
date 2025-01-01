@@ -11,50 +11,47 @@ use ApiPlatform\Metadata\Operation;
 use App\Dto\ImportMemberInput;
 use App\Entity\User;
 use App\Message\ImportMember;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class ImportMemberProcessor implements ProcessorInterface
 {
     public function __construct(
         #[Autowire(service: 'api_platform.doctrine.orm.state.persist_processor')]
-        private ProcessorInterface $persistProcessor,
+        private ProcessorInterface           $persistProcessor,
         #[Autowire(service: 'api_platform.doctrine.orm.state.remove_processor')]
-        private ProcessorInterface $removeProcessor,
-        private MessageBusInterface $messageBus,
+        private ProcessorInterface           $removeProcessor,
+        private readonly MessageBusInterface $messageBus,
         #[Autowire(service: 'oneup_flysystem.default_filesystem_filesystem')]
-        private FilesystemOperator $filesystem,
+        private readonly FilesystemOperator  $filesystem,
     )
     {
     }
 
     /**
+     * @return User|void
+     * @throws FilesystemException
+     * @throws ExceptionInterface
      * @var ImportMemberInput $data
      *
-     * @return User|void
      */
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
-//dump('ici');
-//        dump($data);
 
-//        dd($operation instanceof Post );
-//        die();
+        $fileName = $data->file->getClientOriginalName();
 
-        $this->filesystem->write('test2.png',$data->file->getContent(),[]);
+        $this->filesystem->write($data->file->getClientOriginalName(),$data->file->getContent(),[]);
         if ($operation instanceof Post ) {
-            dd($operation);
-            die();
-            $this->messageBus->dispatch(new ImportMember('test.jpg'));
+            $this->messageBus->dispatch(new ImportMember($fileName));
 
-            return $this->removeProcessor->process($data, $operation, $uriVariables, $context);
+//            return $this->removeProcessor->process($data, $operation, $uriVariables, $context);
         }
 
 //        $result = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
-//        $this->sendWelcomeEmail($data);
 
-        return ['result' => 'ok'];
     }
 
 }

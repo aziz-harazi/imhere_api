@@ -17,5 +17,5 @@ exec-app: PHP
 # password test1234
 create-users:
 create-users:
-	${BASH_DB} "insert into users (id, email, password) values ('07a2f327-103a-11e9-8025-00ff5d11a779', 'test@email.com','$2y$13$CPTpgigKaJp0plFiDfH4DeTP0mAnpRH1OfDFktKdk1D8/dKpfy6Ta')"
+	${BASH_DB} "insert into users (id, email, password) values ('07a2f327-103a-11e9-8025-00ff5d11a779', 'test@email.com','$2y$13$QxH5inyYt4bKvbGNkzwKjO3x7J0nC3dyxZ1NU9rPjH.6CGQGELlSC')"
 .PHONY: create-users

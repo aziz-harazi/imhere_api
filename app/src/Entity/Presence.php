@@ -18,12 +18,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 #[ORM\Entity]
 #[ORM\Table(name: 'presence')]
+#[ORM\UniqueConstraint(name: 'member_day_uniq)', fields: ['day', 'member'])]
 #[ApiResource(normalizationContext: ['groups' => ['presence:read']])]
 #[Delete]
 #[Get]
 #[Patch(denormalizationContext: ['groups' => ['presence.write']])]
 #[GetCollection]
-#[Post(denormalizationContext: ['groups' => ['presence.write']])]
+#[Post(denormalizationContext: ['groups' => ['presence.write']]),]
 class Presence
 {
 
@@ -34,7 +35,7 @@ class Presence
     #[Groups(['presence:read','member:read'])]
     private Uuid $id;
 
-    #[ORM\Column(type: 'datetime_immutable', unique: true)]
+    #[ORM\Column(type: 'datetime_immutable')]
     #[Groups(['presence:read','presence.write','member:read'])]
     private \DateTimeImmutable $day;
 

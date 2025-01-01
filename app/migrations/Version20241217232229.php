@@ -21,8 +21,8 @@ final class Version20241217232229 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE "users" (id UUID NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "user" (email)');
-        $this->addSql('COMMENT ON COLUMN "user".id IS \'(DC2Type:uuid)\'');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D649E7927C74 ON "users" (email)');
+        $this->addSql('COMMENT ON COLUMN "users".id IS \'(DC2Type:uuid)\'');
     }
 
     public function down(Schema $schema): void

@@ -2,8 +2,11 @@ FROM php:8.3-fpm-alpine AS app
 
 WORKDIR /srv
 
-RUN apk add --no-cache postgresql-dev acl && \
-docker-php-ext-install pgsql pdo pdo_pgsql
+RUN apk add --no-cache postgresql-dev acl freetype-dev libjpeg-turbo-dev libpng-dev libxml2-dev libzip-dev \
+&& docker-php-ext-install pgsql pdo pdo_pgsql \
+&& docker-php-ext-configure gd --with-jpeg --with-freetype \
+&& docker-php-ext-install gd \
+&& docker-php-ext-install zip
 # Allow super user to install compose
 ENV COMPOSER_ALLOW_SUPERUSER=1
 

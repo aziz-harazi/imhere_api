@@ -7,17 +7,16 @@ namespace App\Message;
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
 #[AsMessage('async')]
-
 class ImportMember
 {
 
-    public function __construct(private string $filePath)
+    public function __construct(private string $fileName)
     {
 
     }
 
-    public function getFilePath(): string
+    public function getFileName(): string
     {
-        return $this->filePath;
+        return $this->fileName;
     }
 }

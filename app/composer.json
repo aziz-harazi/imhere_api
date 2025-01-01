@@ -29,6 +29,7 @@
         "gedmo/doctrine-extensions": "^3.17",
         "lexik/jwt-authentication-bundle": "^3.1",
         "oneup/flysystem-bundle": "^4.12",
+        "phpoffice/phpspreadsheet": "^3.7",
         "stof/doctrine-extensions-bundle": "^1.12",
         "symfony/asset": "7.2.*",
         "symfony/console": "7.2.*",
@@ -91,5 +92,9 @@
             "allow-contrib": false,
             "require": "7.2.*"
         }
+    },
+    "require-dev": {
+        "symfony/stopwatch": "7.2.*",
+        "symfony/web-profiler-bundle": "7.2.*"
     }
 }
