@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Serializer;
 
-use App\Dto\importMemberInput;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 

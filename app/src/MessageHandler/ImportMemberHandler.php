@@ -27,7 +27,7 @@ readonly class ImportMemberHandler
     /**
      * @throws FilesystemException
      */
-    #[NoReturn] public function __invoke(ImportMember $importMember): void
+    public function __invoke(ImportMember $importMember): mixed
     {
         $stream = $this->filesystem->readStream($importMember->getFileName());
         $memberArray = MemberImportFileParser::parse(stream_get_meta_data($stream)['uri']);
@@ -41,8 +41,9 @@ readonly class ImportMemberHandler
         }
 
         $this->entityManager->flush();
-        dump($memberObjects[0]);
-        die();
+        return true;
+
+
     }
 
 }

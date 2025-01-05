@@ -1,0 +1,32 @@
+name: sf-project-1-back
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+      - name: Check Php Version
+        run: php --version
+      - name: Install Composer Dependencies
+        working-directory: ./app
+        run: composer install --prefer-dist
+      - name: Run phpunit
+        working-directory: ./app
+        run: composer run-phpunit
+      - name: Run phpstan
+        working-directory: ./app
+        run: composer run-phpstan analyse src
+      - run: docker build --target app -t azizhikari/sf-php-composer:1.0 -f ./php/Dockerfile .
+      - run: docker build -t azizhikari/sf-nginx-composer:1.0 -f ./nginx/Dockerfile .
+      - run: docker login docker.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker push azizhikari/sf-php-composer:1.0
+      - run: docker push azizhikari/sf-nginx-composer:1.0
