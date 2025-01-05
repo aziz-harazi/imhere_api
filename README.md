@@ -1,1 +1,1 @@
-**Start from entities to check how it works**
+**Start from app/entity to check how it works**
